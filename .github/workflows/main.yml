@@ -14,18 +14,12 @@ jobs:
           fetch-depth: 1
 
       - name: Checkout Archi
-        uses: actions/checkout@v4
-        with:
-          repository: archimatetool/archi
-          path: ./
-          fetch-depth: 1
+        run: |
+          git clone --depth 1 https://github.com/archimatetool/archi.git ./
 
       - name: Checkout Archi Scripting Plugin
-        uses: actions/checkout@v4
-        with:
-          repository: archimatetool/archi-scripting-plugin
-          path: ./
-          fetch-depth: 1
+        run: |
+          git clone --depth 1 https://github.com/archimatetool/archi-scripting-plugin.git ./ 
 
       - name: Install xmlstarlet
         run: sudo apt-get update && sudo apt-get install -y xmlstarlet
