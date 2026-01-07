@@ -8,8 +8,8 @@
 
   <parent>
     <groupId>com.archimatetool</groupId>
-    <artifactId>archi-scripting-parent</artifactId>
-    <version>1.11.0</version>
+    <artifactId>archi</artifactId>
+    <version>${revision}</version>
   </parent>
 
   <artifactId>com.archimatetool.script</artifactId>
