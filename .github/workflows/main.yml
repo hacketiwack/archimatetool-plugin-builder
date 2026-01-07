@@ -8,11 +8,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
       - name: Checkout Archi
         uses: actions/checkout@v4
         with:
           repository: archimatetool/archi
           path: ./
+          fetch-depth: 1
 
       - name: Checkout Archi Scripting Plugin
         uses: actions/checkout@v4
