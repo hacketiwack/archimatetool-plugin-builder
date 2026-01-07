@@ -30,9 +30,6 @@ jobs:
             -N x="http://maven.apache.org/POM/4.0.0" \
             -s "/x:project/x:modules" -t elem -n "module" -v "com.archimatetool.script" \
             pom.xml
-  
-      - name: List Directories
-        run: find .
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -43,3 +40,12 @@ jobs:
 
       - name: Build
         run: mvn -B -q clean -DskipTests verify
+  
+      - name: List Files
+        run: find . -type f
+
+      - name: Upload plugin JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: archi-plugin
+          path: com.archimatetool.script/target/*.*
