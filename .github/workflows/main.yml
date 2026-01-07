@@ -30,8 +30,9 @@ jobs:
       - name: Install xmlstarlet
         run: sudo apt-get update && sudo apt-get install -y xmlstarlet
       
-      - name: Add plugin module
+      - name: Add Plugin Module
         run: |
+          ls
           xmlstarlet ed -L \
             -N x="http://maven.apache.org/POM/4.0.0" \
             -s "/x:project/x:modules" -t elem -n "module" -v "com.archimatetool.script" \
