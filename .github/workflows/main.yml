@@ -33,6 +33,26 @@ jobs:
           xmlstarlet ed -L \
             -N x="http://maven.apache.org/POM/4.0.0" \
             -s "/x:project/x:modules" -t elem -n "module" -v "com.archimatetool.script.commandline" \
+            pom.xml && \
+          xmlstarlet ed -L \
+            -N x="http://maven.apache.org/POM/4.0.0" \
+            -s "/x:project/x:modules" -t elem -n "module" -v "com.archimatetool.script.feature" \
+            pom.xml && \
+          xmlstarlet ed -L \
+            -N x="http://maven.apache.org/POM/4.0.0" \
+            -s "/x:project/x:modules" -t elem -n "module" -v "com.archimatetool.script.groovy" \
+            pom.xml && \
+          xmlstarlet ed -L \
+            -N x="http://maven.apache.org/POM/4.0.0" \
+            -s "/x:project/x:modules" -t elem -n "module" -v "com.archimatetool.script.jruby" \
+            pom.xml && \
+          xmlstarlet ed -L \
+            -N x="http://maven.apache.org/POM/4.0.0" \
+            -s "/x:project/x:modules" -t elem -n "module" -v "com.archimatetool.script.nashorn" \
+            pom.xml && \
+          xmlstarlet ed -L \
+            -N x="http://maven.apache.org/POM/4.0.0" \
+            -s "/x:project/x:modules" -t elem -n "module" -v "com.archimatetool.script.premium" \
             pom.xml
 
       - name: Set up Java
