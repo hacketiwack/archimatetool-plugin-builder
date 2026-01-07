@@ -26,11 +26,13 @@ jobs:
       
       - name: Add Plugin Module
         run: |
-          ls
           xmlstarlet ed -L \
             -N x="http://maven.apache.org/POM/4.0.0" \
             -s "/x:project/x:modules" -t elem -n "module" -v "com.archimatetool.script" \
             pom.xml
+  
+      - name: List Directories
+        run: find .
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -40,8 +42,4 @@ jobs:
           cache: maven
 
       - name: Build
-        working-directory: archi
         run: mvn -B -q clean -DskipTests verify
-
-      - name: List Directories
-        run: find . -type d
