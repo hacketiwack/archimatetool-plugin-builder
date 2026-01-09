@@ -43,15 +43,14 @@ runs:
 
           xmlstarlet ed -L \
             -N x="$NAMESPACE" \
-            -u "/x:project/x:artifactId" -v "$module" \
-            -u "/x:project/x:version" -v "$version" \
+            -s "/x:project" -t elem -n "artifactId" -v "$module" \
+            -s "/x:project" -t elem -n "version" -v "$version" \
             "$dir/pom.xml" \
 
           cat $dir/pom.xml \
 
           xmlstarlet ed -L \
             -N x="$NAMESPACE" \
-            -s "/x:project/x:modules" \
-            -t elem -n "module" -v "$module" \
+            -s "/x:project/x:modules" -t elem -n "module" -v "$module" \
             pom.xml
         done
