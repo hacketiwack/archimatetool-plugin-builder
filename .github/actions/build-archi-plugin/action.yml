@@ -2,8 +2,11 @@ name: Build Archi Plugin
 description: Builds an Archi plugin
 
 inputs:
-  plugin:
+  name:
     description: "Plugin name (e.g. com.archimatetool.script)"
+    required: true
+  source:
+    description: "Repository of the plugin"
     required: true
 
 runs:
@@ -13,13 +16,17 @@ runs:
       shell: bash
       run: sudo apt-get update && sudo apt-get install -y xmlstarlet
 
-    - name: Add plugin modules and generate pom.xml
+    - name: Retrieve the source
+      shell: bash
+      run: curl -L https://github.com/${{ inputs.source }}/archive/refs/heads/master.tar.gz | tar xz --strip-components=1
+
+    - name: Generate the build descriptors
       shell: bash
       run: |
         set -e
 
         NAMESPACE="http://maven.apache.org/POM/4.0.0"
-        PLUGIN="${{ inputs.plugin }}"
+        PLUGIN="${{ inputs.name }}"
         POM="pom.xml"
         EXCLUDE=("${PLUGIN}.tests" "${PLUGIN}.feature")
 
