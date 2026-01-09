@@ -23,12 +23,6 @@ jobs:
           name: com.archimatetool.script
           source: archimatetool/archi-scripting-plugin
 
-      - name: Build Archi Model Repository Plug-in
-        uses: ./.github/actions/build-archi-plugin
-        with:
-          name: org.archicontribs.modelrepository
-          source: archimatetool/archi-modelrepository-plugin
-
       - name: Build Archi Model Collaboration Plug-in (coArchi2)
         uses: ./.github/actions/build-archi-plugin
         with:
