@@ -13,22 +13,40 @@ runs:
       shell: bash
       run: sudo apt-get update && sudo apt-get install -y xmlstarlet
 
-    - name: Add plugin modules to pom.xml
+    - name: Add plugin modules and generate pom.xml
       shell: bash
       run: |
         set -e
+
         NAMESPACE="http://maven.apache.org/POM/4.0.0"
         PLUGIN="${{ inputs.plugin }}"
         EXCLUDE="${PLUGIN}.tests"
 
         for dir in ${PLUGIN}*; do
           [ -d "$dir" ] || continue
-          module_name="$(basename "$dir")"
-          [ "$module_name" = "$EXCLUDE" ] && continue
 
+          module="$(basename "$dir")"
+          [ "$module" = "$EXCLUDE" ] && continue
+
+          # Copy pom template
+          cp pom-template.xml "$dir/pom.xml"
+
+          # Extract version from MANIFEST.MF
+          manifest="$dir/META-INF/MANIFEST.MF"
+          version="$(grep '^Bundle-Version:' "$manifest" | cut -d' ' -f2)"
+          version="${version%.qualifier}-SNAPSHOT"
+
+          # Set artifactId and version in module pom.xml
+          xmlstarlet ed -L \
+            -N x="$NAMESPACE" \
+            -u "/x:project/x:artifactId" -v "$module" \
+            -u "/x:project/x:version" -v "$version" \
+            "$dir/pom.xml"
+
+          # Add module to root pom.xml
           xmlstarlet ed -L \
             -N x="$NAMESPACE" \
             -s "/x:project/x:modules" \
-            -t elem -n "module" -v "$module_name" \
+            -t elem -n "module" -v "$module" \
             pom.xml
         done
