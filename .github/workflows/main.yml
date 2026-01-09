@@ -20,40 +20,11 @@ jobs:
       - name: Checkout Archi Scripting Plugin
         run: |
           curl -L https://github.com/archimatetool//archi-scripting-plugin/archive/refs/heads/master.tar.gz | tar xz --strip-components=1
-
-      - name: Install xmlstarlet
-        run: sudo apt-get update && sudo apt-get install -y xmlstarlet
       
       - name: Add Plugin Module
-        run: |
-          xmlstarlet ed -L \
-            -N x="http://maven.apache.org/POM/4.0.0" \
-            -s "/x:project/x:modules" -t elem -n "module" -v "com.archimatetool.script" \
-            pom.xml && \
-          xmlstarlet ed -L \
-            -N x="http://maven.apache.org/POM/4.0.0" \
-            -s "/x:project/x:modules" -t elem -n "module" -v "com.archimatetool.script.commandline" \
-            pom.xml && \
-          xmlstarlet ed -L \
-            -N x="http://maven.apache.org/POM/4.0.0" \
-            -s "/x:project/x:modules" -t elem -n "module" -v "com.archimatetool.script.feature" \
-            pom.xml && \
-          xmlstarlet ed -L \
-            -N x="http://maven.apache.org/POM/4.0.0" \
-            -s "/x:project/x:modules" -t elem -n "module" -v "com.archimatetool.script.groovy" \
-            pom.xml && \
-          xmlstarlet ed -L \
-            -N x="http://maven.apache.org/POM/4.0.0" \
-            -s "/x:project/x:modules" -t elem -n "module" -v "com.archimatetool.script.jruby" \
-            pom.xml && \
-          xmlstarlet ed -L \
-            -N x="http://maven.apache.org/POM/4.0.0" \
-            -s "/x:project/x:modules" -t elem -n "module" -v "com.archimatetool.script.nashorn" \
-            pom.xml && \
-          xmlstarlet ed -L \
-            -N x="http://maven.apache.org/POM/4.0.0" \
-            -s "/x:project/x:modules" -t elem -n "module" -v "com.archimatetool.script.premium" \
-            pom.xml
+        uses: ./.github/workflows/add-archi-modules.yml
+        with:
+          plugin: com.archimatetool.script
 
       - name: Set up Java
         uses: actions/setup-java@v4
