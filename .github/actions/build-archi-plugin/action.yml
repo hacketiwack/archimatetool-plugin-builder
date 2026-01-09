@@ -1,0 +1,34 @@
+name: Build Archi Plugin
+description: This actions builds an Archi plugin
+
+inputs:
+  plugin:
+    description: "Plugin name (e.g. com.archimatetool.script)"
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Install xmlstarlet
+      shell: bash
+      run: sudo apt-get update && sudo apt-get install -y xmlstarlet
+
+    - name: Add plugin modules to pom.xml
+      shell: bash
+      run: |
+        set -e
+        NAMESPACE="http://maven.apache.org/POM/4.0.0"
+        PLUGIN="${{ inputs.plugin }}"
+        EXCLUDE="${PLUGIN}.tests"
+
+        for dir in ${PLUGIN}*; do
+          [ -d "$dir" ] || continue
+          module_name="$(basename "$dir")"
+          [ "$module_name" = "$EXCLUDE" ] && continue
+
+          xmlstarlet ed -L \
+            -N x="$NAMESPACE" \
+            -s "/x:project/x:modules" \
+            -t elem -n "module" -v "$module_name" \
+            pom.xml
+        done
