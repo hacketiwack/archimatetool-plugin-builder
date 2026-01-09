@@ -28,22 +28,25 @@ runs:
           module="$(basename "$dir")"
           [ "$module" = "$EXCLUDE" ] && continue
 
-          # Copy pom template
           cp pom-template.xml "$dir/pom.xml"
 
-          # Extract version from MANIFEST.MF
-          manifest="$dir/META-INF/MANIFEST.MF"
-          version="$(grep '^Bundle-Version:' "$manifest" | cut -d' ' -f2)"
+          if [[ "$module" == *feature ]]; then
+            version="$(xmlstarlet sel \
+              -t -v "/feature/@version" \
+              "$dir/feature.xml")"
+          else
+            version="$(grep '^Bundle-Version:' \
+              "$dir/META-INF/MANIFEST.MF" | cut -d' ' -f2)"
+          fi
+
           version="${version%.qualifier}-SNAPSHOT"
 
-          # Set artifactId and version in module pom.xml
           xmlstarlet ed -L \
             -N x="$NAMESPACE" \
             -u "/x:project/x:artifactId" -v "$module" \
             -u "/x:project/x:version" -v "$version" \
             "$dir/pom.xml"
 
-          # Add module to root pom.xml
           xmlstarlet ed -L \
             -N x="$NAMESPACE" \
             -s "/x:project/x:modules" \
