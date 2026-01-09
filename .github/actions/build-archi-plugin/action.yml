@@ -45,7 +45,9 @@ runs:
             -N x="$NAMESPACE" \
             -u "/x:project/x:artifactId" -v "$module" \
             -u "/x:project/x:version" -v "$version" \
-            "$dir/pom.xml"
+            "$dir/pom.xml" \
+
+          cat $dir/pom.xml \
 
           xmlstarlet ed -L \
             -N x="$NAMESPACE" \
