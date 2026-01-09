@@ -22,7 +22,7 @@ jobs:
           curl -L https://github.com/archimatetool//archi-scripting-plugin/archive/refs/heads/master.tar.gz | tar xz --strip-components=1
       
       - name: Add Plugin Module
-        uses: ./.github/workflows/add-archi-modules.yml
+        uses: ./.github/workflows/build-archi-plugin.yml
         with:
           plugin: com.archimatetool.script
 
