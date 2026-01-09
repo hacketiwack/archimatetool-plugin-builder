@@ -74,7 +74,7 @@ runs:
     - name: Prepare JARs for artifact
       shell: bash
       run: |
-        mkdir tmp
+        mkdir -p tmp
         cp ${{ inputs.name }}*/target/*.jar tmp/
         touch tmp/archi-plugin
 
@@ -83,3 +83,7 @@ runs:
       with:
         name: ${{ inputs.name }}.archiplugin
         path: tmp/*
+
+    - name: Empty temporary files
+      shell: bash
+      run: rm -rf tmp
