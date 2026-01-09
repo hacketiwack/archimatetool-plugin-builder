@@ -27,16 +27,13 @@ runs:
         NAMESPACE="http://maven.apache.org/POM/4.0.0"
         PLUGIN="${{ inputs.name }}"
         POM="pom.xml"
-        EXCLUDE=("${PLUGIN}.tests" "${PLUGIN}.feature")
 
         for dir in ${PLUGIN}*; do
           [ -d "$dir" ] || continue
 
           module="$(basename "$dir")"
 
-          if [[ " ${EXCLUDE[*]} " == *" $module "* ]]; then
-            continue
-          fi
+          [[ "$module" == *.tests || "$module" == *.feature ]] && continue
 
           cp pom-template.xml "$dir/pom.xml"
           manifest="$dir/META-INF/MANIFEST.MF"
