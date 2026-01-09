@@ -24,7 +24,6 @@ runs:
       shell: bash
       run: |
         set -e
-
         NAMESPACE="http://maven.apache.org/POM/4.0.0"
         PLUGIN="${{ inputs.name }}"
         POM="pom.xml"
@@ -39,22 +38,17 @@ runs:
             continue
           fi
 
-          # Copy pom-template.xml
           cp pom-template.xml "$dir/pom.xml"
-
-          # Extract version from MANIFEST.MF
           manifest="$dir/META-INF/MANIFEST.MF"
           version="$(grep '^Bundle-Version:' "$manifest" | cut -d' ' -f2)"
           version="${version%.qualifier}-SNAPSHOT"
 
-          # Set artifactId and version in module pom.xml
           xmlstarlet ed -L \
             -N x="$NAMESPACE" \
             -s "/x:project" -t elem -n "artifactId" -v "$module" \
             -s "/x:project" -t elem -n "version" -v "$version" \
             "$dir/pom.xml"
 
-          # Add module to root pom.xml
           xmlstarlet ed -L \
             -N x="$NAMESPACE" \
             -s "/x:project/x:modules" \
@@ -62,11 +56,18 @@ runs:
             "$POM"
         done
 
+    - name: Detect Java version
+      shell: bash
+      run: |
+        set -e
+        echo "JAVA_VERSION=$(grep '^Bundle-RequiredExecutionEnvironment:' "${{ inputs.name }}/META-INF/MANIFEST.MF" \
+          | sed -E 's/.*JavaSE-([0-9]+).*/\1/')" >> "$GITHUB_ENV"
+
     - name: Set up Java
       uses: actions/setup-java@v4
       with:
         distribution: temurin
-        java-version: 21
+        java-version: ${{ env.JAVA_VERSION }}
         cache: maven
 
     - name: Build
