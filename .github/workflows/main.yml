@@ -14,8 +14,7 @@ jobs:
           fetch-depth: 1
 
       - name: Checkout Archi
-        run: |
-          curl -L https://github.com/archimatetool/archi/archive/refs/heads/master.tar.gz | tar xz --strip-components=1
+        run: curl -sL https://github.com/archimatetool/archi/archive/refs/heads/master.tar.gz | tar xz --strip-components=1
 
       - name: Build Archi Scripting Plug-in (jArchi)
         uses: ./.github/actions/build-archi-plugin
