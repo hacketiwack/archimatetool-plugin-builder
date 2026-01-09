@@ -14,11 +14,11 @@ runs:
   steps:
     - name: Install xmlstarlet
       shell: bash
-      run: sudo apt-get update && sudo apt-get install -y xmlstarlet
+      run: sudo apt-get -qq update && sudo apt-get -qq install -y xmlstarlet
 
     - name: Retrieve the source
       shell: bash
-      run: curl -L https://github.com/${{ inputs.source }}/archive/refs/heads/master.tar.gz | tar xz --strip-components=1
+      run: curl -s -L https://github.com/${{ inputs.source }}/archive/refs/heads/master.tar.gz | tar xz --strip-components=1
 
     - name: Generate the build descriptors
       shell: bash
