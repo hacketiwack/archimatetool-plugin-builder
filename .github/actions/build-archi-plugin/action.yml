@@ -1,7 +1,5 @@
 name: Build Archi Plugin
-description: This actions builds an Archi plugin
-name: Add Archi Plugin Modules
-description: Adds Archi plugin modules and generates pom.xml files from a template
+description: Builds an Archi plugin
 
 inputs:
   plugin:
