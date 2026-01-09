@@ -1,12 +1,12 @@
-name: Build Archi Plugin
-description: Builds an Archi plugin
+name: Build Plugin
+description: Builds a plugin usable in Archi
 
 inputs:
   name:
     description: "Plugin name (e.g. com.archimatetool.script)"
     required: true
   source:
-    description: "Repository of the plugin"
+    description: "GitHub repository of the plugin"
     required: true
 
 runs:
@@ -35,7 +35,7 @@ runs:
 
           [[ "$module" == *.tests || "$module" == *.feature ]] && continue
 
-          cp pom-template.xml "$dir/pom.xml"
+          cp "$GITHUB_ACTION_PATH/pom.xml" "$dir/pom.xml"
           manifest="$dir/META-INF/MANIFEST.MF"
           version="$(grep '^Bundle-Version:' "$manifest" | cut -d' ' -f2)"
           version="${version%.qualifier}-SNAPSHOT"
