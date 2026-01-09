@@ -1,0 +1,34 @@
+name: Build Archi Plugin
+on:
+  workflow_call:
+    inputs:
+      plugin:
+        description: "The plugin name (e.g., com.archimatetool.script)"
+        required: true
+
+jobs:
+  add-modules:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install xmlstarlet
+        run: sudo apt-get update && sudo apt-get install -y xmlstarlet
+
+      - name: Add Plugin Modules
+        run: |
+          set -e
+          NAMESPACE="http://maven.apache.org/POM/4.0.0"
+          PLUGIN="${{ inputs.plugin }}"
+          EXCLUDE="${PLUGIN}.tests"
+          POM="pom.xml"
+
+          for dir in ${PLUGIN}*; do
+            [ -d "$dir" ] || continue
+            module_name="$(basename "$dir")"
+            [ "$module_name" = "$EXCLUDE" ] && continue
+
+            xmlstarlet ed -L \
+              -N x="$NAMESPACE" \
+              -s "/x:project/x:modules" \
+              -t elem -n "module" -v "$module_name" \
+              "$POM"
+          done
