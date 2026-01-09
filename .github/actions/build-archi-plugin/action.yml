@@ -68,3 +68,7 @@ runs:
         distribution: temurin
         java-version: 21
         cache: maven
+
+      - name: Build
+        run: mvn -B -q clean -DskipTests verify
+  
