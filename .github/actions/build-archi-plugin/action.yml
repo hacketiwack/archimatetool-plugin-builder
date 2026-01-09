@@ -70,9 +70,11 @@ runs:
         cache: maven
 
     - name: Build
+      shell: bash
       run: mvn -B -q clean -DskipTests verify
   
     - name: Prepare JARs for artifact
+      shell: bash
       run: |
         mkdir tmp
         cp ${{ inputs.name }}*/target/*.jar tmp/
