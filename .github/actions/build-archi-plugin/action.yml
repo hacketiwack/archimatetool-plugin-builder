@@ -1,5 +1,7 @@
 name: Build Archi Plugin
 description: This actions builds an Archi plugin
+name: Add Archi Plugin Modules
+description: Adds Archi plugin modules and generates pom.xml files from a template
 
 inputs:
   plugin:
@@ -20,37 +22,37 @@ runs:
 
         NAMESPACE="http://maven.apache.org/POM/4.0.0"
         PLUGIN="${{ inputs.plugin }}"
-        EXCLUDE="${PLUGIN}.tests"
+        POM="pom.xml"
+        EXCLUDE=("${PLUGIN}.tests" "${PLUGIN}.feature")
 
         for dir in ${PLUGIN}*; do
           [ -d "$dir" ] || continue
 
           module="$(basename "$dir")"
-          [ "$module" = "$EXCLUDE" ] && continue
 
-          cp pom-template.xml "$dir/pom.xml"
-
-          if [[ "$module" == *feature ]]; then
-            version="$(xmlstarlet sel \
-              -t -v "/feature/@version" \
-              "$dir/feature.xml")"
-          else
-            version="$(grep '^Bundle-Version:' \
-              "$dir/META-INF/MANIFEST.MF" | cut -d' ' -f2)"
+          if [[ " ${EXCLUDE[*]} " == *" $module "* ]]; then
+            continue
           fi
 
+          # Copy pom-template.xml
+          cp pom-template.xml "$dir/pom.xml"
+
+          # Extract version from MANIFEST.MF
+          manifest="$dir/META-INF/MANIFEST.MF"
+          version="$(grep '^Bundle-Version:' "$manifest" | cut -d' ' -f2)"
           version="${version%.qualifier}-SNAPSHOT"
 
+          # Set artifactId and version in module pom.xml
           xmlstarlet ed -L \
             -N x="$NAMESPACE" \
             -s "/x:project" -t elem -n "artifactId" -v "$module" \
             -s "/x:project" -t elem -n "version" -v "$version" \
-            "$dir/pom.xml" \
+            "$dir/pom.xml"
 
-          cat $dir/pom.xml \
-
+          # Add module to root pom.xml
           xmlstarlet ed -L \
             -N x="$NAMESPACE" \
-            -s "/x:project/x:modules" -t elem -n "module" -v "$module" \
-            pom.xml
+            -s "/x:project/x:modules" \
+            -t elem -n "module" -v "$module" \
+            "$POM"
         done
