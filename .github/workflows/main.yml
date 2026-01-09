@@ -17,8 +17,20 @@ jobs:
         run: |
           curl -L https://github.com/archimatetool/archi/archive/refs/heads/master.tar.gz | tar xz --strip-components=1
 
-      - name: Add Plugin
+      - name: Build Archi Scripting Plug-in (jArchi)
         uses: ./.github/actions/build-archi-plugin
         with:
           name: com.archimatetool.script
           source: archimatetool/archi-scripting-plugin
+
+      - name: Build Archi Model Repository Plug-in
+        uses: ./.github/actions/build-archi-plugin
+        with:
+          name: org.archicontribs.modelrepository
+          source: archimatetool/archi-modelrepository-plugin
+
+      - name: Build Archi Model Collaboration Plug-in (coArchi2)
+        uses: ./.github/actions/build-archi-plugin
+        with:
+          name: com.archimatetool.modelrepository
+          source: archimatetool/archi-modelrepository-plugin2
