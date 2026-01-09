@@ -71,19 +71,16 @@ runs:
       shell: bash
       run: mvn -B -q clean -DskipTests verify
   
-    - name: Prepare JARs for artifact
+    - name: Package plugin
       shell: bash
       run: |
-        mkdir -p tmp
-        cp ${{ inputs.name }}*/target/*.jar tmp/
-        touch tmp/archi-plugin
+        set -e
+        zip -r "${{ inputs.name }}.archiplugin" ${{ inputs.name }}*/target/*.jar
+        touch archi-plugin
+        zip -ur "${{ inputs.name }}.archiplugin" archi-plugin
 
     - name: Upload Plugin
       uses: actions/upload-artifact@v4
       with:
         name: ${{ inputs.name }}.archiplugin
-        path: tmp/*
-
-    - name: Empty temporary files
-      shell: bash
-      run: rm -rf tmp
+        path: ${{ inputs.name }}.archiplugin
