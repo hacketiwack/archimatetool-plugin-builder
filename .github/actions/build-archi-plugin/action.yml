@@ -72,3 +72,14 @@ runs:
       - name: Build
         run: mvn -B -q clean -DskipTests verify
   
+      - name: Prepare JARs for artifact
+        run: |
+          mkdir tmp
+          cp ${{ inputs.name }}*/target/*.jar tmp/
+          touch tmp/archi-plugin
+
+      - name: Upload Plugin
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.name }}.archiplugin
+          path: tmp/*
