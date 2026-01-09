@@ -61,3 +61,10 @@ runs:
             -t elem -n "module" -v "$module" \
             "$POM"
         done
+
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: 21
+        cache: maven
