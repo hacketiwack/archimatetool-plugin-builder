@@ -1,1 +1,1 @@
-Builder for Archimate Tool plugins.
+Builder for [ArchiMate Tool](https://github.com/archimatetool) plugins.
