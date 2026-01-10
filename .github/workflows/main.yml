@@ -21,9 +21,11 @@ jobs:
         with:
           name: com.archimatetool.script
           source: archimatetool/archi-scripting-plugin
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Archi Model Collaboration Plug-in (coArchi2)
         uses: ./.github/actions/build-archi-plugin
         with:
           name: com.archimatetool.modelrepository
           source: archimatetool/archi-modelrepository-plugin2
+          token: ${{ secrets.GITHUB_TOKEN }}
