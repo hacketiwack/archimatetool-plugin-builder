@@ -8,6 +8,9 @@ inputs:
   source:
     description: "GitHub repository of the plugin"
     required: true
+  token:
+    description: "GitHub token"
+    required: true
 
 runs:
   using: composite
@@ -81,12 +84,12 @@ runs:
 
     - name: Create snapshot release (ignore if exists)
       env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ inputs.token }}
       run: |
         gh release create snapshot --prerelease || true
     
     - name: Upload artifacts
       env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_TOKEN: ${{ inputs.token }}
       run: |
         gh release upload snapshot "${{ inputs.name }}.archiplugin" --clobber
