@@ -85,10 +85,12 @@ runs:
     - name: Create snapshot release (ignore if exists)
       env:
         GH_TOKEN: ${{ inputs.token }}
+      shell: bash
       run: |
         gh release create snapshot --prerelease || true
     
     - name: Upload artifacts
+      shell: bash
       env:
         GH_TOKEN: ${{ inputs.token }}
       run: |
