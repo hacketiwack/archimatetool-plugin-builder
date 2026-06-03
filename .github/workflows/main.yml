@@ -21,6 +21,14 @@ jobs:
       - name: Checkout Archi
         run: curl -sL https://github.com/archimatetool/archi/archive/refs/heads/master.tar.gz | tar xz --strip-components=1
 
+      - name: Recreate snapshot release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete snapshot --yes --cleanup-tag 2>/dev/null || true
+          gh release create snapshot --prerelease --title "Snapshot" \
+            --notes "Automated snapshot build — $(date -u '+%Y-%m-%d %H:%M UTC')"
+
       - name: Build Archi Scripting Plug-in (jArchi)
         uses: ./.github/actions/build-archi-plugin
         with:
