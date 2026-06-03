@@ -82,7 +82,7 @@ runs:
         touch archi-plugin
         zip -ur "${{ inputs.name }}.archiplugin" archi-plugin
 
-    - name: Create snapshot release (ignore if exists)
+    - name: Create snapshot release
       env:
         GH_TOKEN: ${{ inputs.token }}
       shell: bash
