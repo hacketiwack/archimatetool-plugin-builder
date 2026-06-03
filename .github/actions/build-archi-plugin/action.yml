@@ -1,6 +1,5 @@
 name: Build Plugin
 description: Builds a plugin usable in Archi
-
 inputs:
   name:
     description: "Plugin name (e.g. com.archimatetool.script)"
@@ -11,18 +10,18 @@ inputs:
   token:
     description: "GitHub token"
     required: true
-
+  version:
+    description: "Plugin version override (e.g. 5.0.0). If omitted, version is read from MANIFEST.MF."
+    required: false
 runs:
   using: composite
   steps:
     - name: Install xmlstarlet
       shell: bash
       run: sudo apt-get -qq update && sudo apt-get -qq install -y xmlstarlet
-
     - name: Retrieve the source
       shell: bash
       run: curl -s -L https://github.com/${{ inputs.source }}/archive/refs/heads/master.tar.gz | tar xz --strip-components=1
-
     - name: Generate the build descriptors
       shell: bash
       run: |
@@ -30,50 +29,44 @@ runs:
         NAMESPACE="http://maven.apache.org/POM/4.0.0"
         PLUGIN="${{ inputs.name }}"
         POM="pom.xml"
-
         for dir in ${PLUGIN}*; do
           [ -d "$dir" ] || continue
-
           module="$(basename "$dir")"
-
           [[ "$module" == *.tests || "$module" == *.feature ]] && continue
-
           cp "$GITHUB_ACTION_PATH/pom.xml" "$dir/pom.xml"
           manifest="$dir/META-INF/MANIFEST.MF"
-          version="$(grep '^Bundle-Version:' "$manifest" | cut -d' ' -f2)"
-          version="${version%.qualifier}-SNAPSHOT"
-
+          if [ -n "${{ inputs.version }}" ]; then
+            version="${{ inputs.version }}-SNAPSHOT"
+          else
+            version="$(grep '^Bundle-Version:' "$manifest" | cut -d' ' -f2)"
+            version="${version%.qualifier}-SNAPSHOT"
+          fi
           xmlstarlet ed -L \
             -N x="$NAMESPACE" \
             -s "/x:project" -t elem -n "artifactId" -v "$module" \
             -s "/x:project" -t elem -n "version" -v "$version" \
             "$dir/pom.xml"
-
           xmlstarlet ed -L \
             -N x="$NAMESPACE" \
             -s "/x:project/x:modules" \
             -t elem -n "module" -v "$module" \
             "$POM"
         done
-
     - name: Detect Java version
       shell: bash
       run: |
         set -e
         echo "JAVA_VERSION=$(grep '^Bundle-RequiredExecutionEnvironment:' "${{ inputs.name }}/META-INF/MANIFEST.MF" \
           | sed -E 's/.*JavaSE-([0-9]+).*/\1/')" >> "$GITHUB_ENV"
-
     - name: Set up Java
       uses: actions/setup-java@v4
       with:
         distribution: temurin
         java-version: ${{ env.JAVA_VERSION }}
         cache: maven
-
     - name: Build
       shell: bash
       run: mvn -B -q clean -DskipTests verify
-  
     - name: Package plugin
       shell: bash
       run: |
@@ -81,7 +74,6 @@ runs:
         zip -r "${{ inputs.name }}.archiplugin" ${{ inputs.name }}*/target/*.jar
         touch archi-plugin
         zip -ur "${{ inputs.name }}.archiplugin" archi-plugin
-    
     - name: Upload artifacts
       shell: bash
       env:
