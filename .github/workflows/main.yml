@@ -9,18 +9,9 @@ permissions:
   contents: write
 
 jobs:
-  build:
+  prepare:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout sources
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Checkout Archi
-        run: curl -sL https://github.com/archimatetool/archi/archive/refs/heads/master.tar.gz | tar xz --strip-components=1
-
       - name: Recreate snapshot release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -28,17 +19,26 @@ jobs:
           gh release delete snapshot --yes --cleanup-tag 2>/dev/null || true
           gh release create snapshot --prerelease --title "Snapshot" \
             --notes "Automated snapshot build — $(date -u '+%Y-%m-%d %H:%M UTC')"
-
-      - name: Build Archi Scripting Plug-in (jArchi)
+  build:
+    needs: prepare
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - name: com.archimatetool.script
+            source: archimatetool/archi-scripting-plugin
+          - name: com.archimatetool.modelrepository
+            source: archimatetool/archi-modelrepository-plugin2
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Checkout Archi
+        run: curl -sL https://github.com/archimatetool/archi/archive/refs/heads/master.tar.gz | tar xz --strip-components=1
+      - name: Build plugin
         uses: ./.github/actions/build-archi-plugin
         with:
-          name: com.archimatetool.script
-          source: archimatetool/archi-scripting-plugin
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build Archi Model Collaboration Plug-in (coArchi2)
-        uses: ./.github/actions/build-archi-plugin
-        with:
-          name: com.archimatetool.modelrepository
-          source: archimatetool/archi-modelrepository-plugin2
+          name: ${{ matrix.name }}
+          source: ${{ matrix.source }}
           token: ${{ secrets.GITHUB_TOKEN }}
