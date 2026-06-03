@@ -36,11 +36,11 @@ runs:
           [[ "$module" == *.tests || "$module" == *.feature ]] && continue
           cp "$GITHUB_ACTION_PATH/pom.xml" "$dir/pom.xml"
           manifest="$dir/META-INF/MANIFEST.MF"
-          if [ -n "${{ inputs.version }}" ]; then
-            version="${{ inputs.version }}-SNAPSHOT"
-          else
+          if [ "${{ inputs.version }}" = "snapshot" ]; then
             version="$(grep '^Bundle-Version:' "$manifest" | cut -d' ' -f2)"
             version="${version%.qualifier}-SNAPSHOT"
+          else
+            version="${{ inputs.version }}"
           fi
           xmlstarlet ed -L \
             -N x="$NAMESPACE" \
