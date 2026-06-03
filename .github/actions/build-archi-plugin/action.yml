@@ -11,8 +11,9 @@ inputs:
     description: "GitHub token"
     required: true
   version:
-    description: "Plugin version override (e.g. 5.0.0). If omitted, version is read from MANIFEST.MF."
+    description: "Plugin version override (e.g. 5.0.0)"
     required: false
+    default: snapshot
 runs:
   using: composite
   steps:
@@ -79,4 +80,4 @@ runs:
       env:
         GH_TOKEN: ${{ inputs.token }}
       run: |
-        gh release upload snapshot "${{ inputs.name }}.archiplugin" --clobber
+        gh release upload ${{ inputs.version }} "${{ inputs.name }}.archiplugin" --clobber
