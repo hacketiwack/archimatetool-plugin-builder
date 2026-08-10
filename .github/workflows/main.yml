@@ -6,22 +6,7 @@ on:
 permissions:
   contents: write
 jobs:
-  prepare:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v7
-        with:
-          fetch-depth: 1
-      - name: Recreate snapshot release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh release delete snapshot --yes --cleanup-tag 2>/dev/null || true
-          gh release create snapshot --prerelease --title "Snapshot" \
-            --notes "Automated snapshot build — $(date -u '+%Y-%m-%d %H:%M UTC')"
   build:
-    needs: prepare
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -35,6 +20,13 @@ jobs:
         uses: actions/checkout@v7
         with:
           fetch-depth: 1
+      - name: Recreate snapshot release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete snapshot --yes --cleanup-tag 2>/dev/null || true
+          gh release create snapshot --prerelease --title "Snapshot" \
+            --notes "Automated snapshot build — $(date -u '+%Y-%m-%d %H:%M UTC')"
       - name: Checkout Archi
         run: curl -sL https://github.com/archimatetool/archi/archive/refs/heads/master.tar.gz | tar xz --strip-components=1
       - name: Build plugin
