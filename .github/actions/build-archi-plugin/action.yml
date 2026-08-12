@@ -72,7 +72,7 @@ runs:
       shell: bash
       run: |
         set -e
-        zip -r "${{ inputs.name }}.archiplugin" ${{ inputs.name }}*/target/*.jar
+        zip -j "${{ inputs.name }}.archiplugin" ${{ inputs.name }}*/target/*.jar
         touch archi-plugin
         zip -ur "${{ inputs.name }}.archiplugin" archi-plugin
     - name: Upload artifacts
